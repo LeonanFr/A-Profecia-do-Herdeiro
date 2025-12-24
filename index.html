@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Portal da Ordem - A Profecia do Herdeiro</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="typewriter.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Merienda:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+</head>
+
+<body>
+    <div class="background-image"></div>
+    <div class="overlay"></div>
+    <main class="portal-home">
+
+        <div class="logo-container">
+            <img src="assets/images/logo-herdeiro.png" alt="A Ordem dos Guardiões - A Profecia do Herdeiro"
+                class="main-logo">
+        </div>
+
+        <div class="quote-section">
+            <blockquote class="quote-text">
+                <div class="quote-container">
+                    <div class="typewriter-container">
+                        <p class="typewriter-line" id="quote-display"></p>
+                    </div>
+                </div>
+            </blockquote>
+        </div>
+
+        <div class="cta-section">
+
+            <a href="book.html" class="portal-cta" id="enter-portal">
+                <span class="cta-label">Cruze o limiar</span>
+                <img src="assets/icons/cta-arrow.png" alt="Book" class="cta-arrow">
+            </a>
+
+            <nav class="portal-nav">
+
+                <a href="mapa.html" class="nav-item" data-target="explorar">
+                    <img src="assets/icons/explore.png" alt="Explorar" class="nav-icon">
+                    <span class="nav-label">Explore</span>
+                </a>
+
+                <a href="arquivo.html" class="nav-item" data-target="arquivo">
+                    <img src="assets/icons/archive.png" alt="Arquivo" class="nav-icon">
+                    <span class="nav-label">Arquivo</span>
+                </a>
+
+                <a href="profecia.html" class="nav-item" data-target="profecia">
+                    <img src="assets/icons/prophecy.png" alt="Profecia" class="nav-icon">
+                    <span class="nav-label">Profecias</span>
+                </a>
+
+                <a href="linha-do-tempo.html" class="nav-item" data-target="timeline">
+                    <img src="assets/icons/timeline.png" alt="Linha do Tempo" class="nav-icon">
+                    <span class="nav-label">Linha do Tempo</span>
+                </a>
+            </nav>
+        </div>
+
+    </main>
+    <script src="typewriter.js"></script>
+    <script src="main.js"></script>
+</body>
+
+</html>

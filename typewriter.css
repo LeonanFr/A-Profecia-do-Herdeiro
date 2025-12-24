@@ -1,0 +1,71 @@
+.typewriter-container {
+    position: relative;
+    display: inline-block;
+    max-width: 800px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.typewriter-line {
+    font-family: 'Merienda', cursive;
+    font-size: 1.6rem;
+    line-height: 1.5;
+    font-weight: 500;
+    color: var(--gold-secondary);
+    font-style: italic;
+    text-align: center;
+    letter-spacing: 0.03em;
+    text-transform: none;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    width: fit-content;
+    min-width: 20px;
+    margin: 0 auto;
+    box-sizing: border-box;
+}
+
+.typewriter-line::after {
+    content: '';
+    display: inline-block;
+    width: 2px;
+    height: 1.2em;
+    background-color: var(--gold-primary);
+    animation: blinkCursor 0.75s step-end infinite;
+    vertical-align: middle;
+    margin-left: 2px;
+    position: relative;
+    top: 1px;
+}
+
+@keyframes blinkCursor {
+
+    0%,
+    50% {
+        opacity: 1;
+    }
+
+    51%,
+    100% {
+        opacity: 0;
+    }
+}
+
+.typewriter-line:empty::after {
+    margin-left: 0;
+}
+
+.typewriter-line {
+    position: relative;
+    display: inline-block;
+}
+
+@media (max-width: 768px) {
+    .typewriter-line {
+        font-size: 1.3rem;
+        line-height: 1.4;
+    }
+
+    .typewriter-line::after {
+        height: 1.1em;
+    }
+}
