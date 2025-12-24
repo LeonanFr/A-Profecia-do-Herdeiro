@@ -20,9 +20,18 @@ class Typewriter {
         this.deleteSpeed = 30;
         this.pauseDuration = 3000;
         this.timeout = null;
-        this.quoteIndex = 0;
+        this.availableIndices = [];
+        this.quoteIndex = this.getNextIndex();
 
         this.element.textContent = '';
+    }
+
+    getNextIndex() {
+        if (this.availableIndices.length === 0) {
+            this.availableIndices = quotes.map((_, i) => i);
+        }
+        const randomIndex = Math.floor(Math.random() * this.availableIndices.length);
+        return this.availableIndices.splice(randomIndex, 1)[0];
     }
 
     start() {
@@ -69,7 +78,7 @@ class Typewriter {
             this.timeout = setTimeout(() => this.deleteCharacter(), this.deleteSpeed);
         } else {
             this.isDeleting = false;
-            this.quoteIndex = (this.quoteIndex + 1) % quotes.length;
+            this.quoteIndex = this.getNextIndex();
             this.timeout = setTimeout(() => this.startTyping(), 500);
         }
     }
