@@ -111,7 +111,6 @@ class ExplorePage {
         this.setupEventListeners();
         this.setupNavigation();
         this.setupMobileMenu();
-        this.setupMobileCloseButton();
         this.loadPlaces();
         this.animateEntrance();
 
@@ -132,7 +131,6 @@ class ExplorePage {
     }
 
     setupResponsive() {
-
         this.checkMobile();
 
         window.addEventListener('resize', () => {
@@ -155,76 +153,53 @@ class ExplorePage {
     }
 
     updateMobileUI() {
-        const mobileCloseBtn = document.getElementById('mobileClosePanel');
-        if (mobileCloseBtn) {
-            mobileCloseBtn.style.display = this.isMobile ? 'flex' : 'none';
+        const worldMap = document.getElementById('world-map');
+        if (worldMap && this.isMobile) {
+            worldMap.style.minHeight = '400px';
         }
     }
 
     setupMobileMenu() {
         const menuToggle = document.getElementById('menuToggle');
-        const headerNav = document.getElementById('headerNav');
+        const navMenu = document.getElementById('navMenu');
 
-        if (menuToggle && headerNav) {
+        if (menuToggle && navMenu) {
             menuToggle.addEventListener('click', (e) => {
                 e.stopPropagation();
                 menuToggle.classList.toggle('active');
-                headerNav.classList.toggle('active');
-
-                headerNav.querySelectorAll('a').forEach(link => {
-                    link.addEventListener('click', () => {
-                        menuToggle.classList.remove('active');
-                        headerNav.classList.remove('active');
-                    });
-                });
+                navMenu.classList.toggle('active');
             });
 
             document.addEventListener('click', (e) => {
-                if (!menuToggle.contains(e.target) && !headerNav.contains(e.target) && headerNav.classList.contains('active')) {
+                if (!menuToggle.contains(e.target) && !navMenu.contains(e.target) && navMenu.classList.contains('active')) {
                     menuToggle.classList.remove('active');
-                    headerNav.classList.remove('active');
+                    navMenu.classList.remove('active');
                 }
             });
 
-            headerNav.addEventListener('click', (e) => {
-                e.stopPropagation();
-            });
-        }
-    }
-
-    setupMobileCloseButton() {
-        const mobileCloseBtn = document.getElementById('mobileClosePanel');
-        if (mobileCloseBtn) {
-            mobileCloseBtn.addEventListener('click', () => {
-                if (this.currentMode === 'atlas') {
-                    this.closePanel('atlas');
-                } else if (this.currentMode === 'lugares') {
-                    this.closePanel('lugares');
-                }
+            navMenu.querySelectorAll('a').forEach(link => {
+                link.addEventListener('click', () => {
+                    menuToggle.classList.remove('active');
+                    navMenu.classList.remove('active');
+                });
             });
         }
     }
 
     setupModeTabs() {
-        const tabs = document.querySelectorAll('.mode-tab');
+        const tabs = document.querySelectorAll('.archive-nav-btn');
         const contents = document.querySelectorAll('.mode-content');
-        const description = document.getElementById('mode-description-text');
         const navigation = document.querySelector('.explore-navigation');
-
-        const descriptions = {
-            atlas: 'Explore as sedes secretas da Ordem ao redor do mundo. Cada ponto guarda histórias, segredos e membros notáveis.',
-            lugares: 'Visite os locais reais e fictícios onde a história se desenrolou. Cada lugar tem sua própria memória na narrativa.'
-        };
 
         tabs.forEach(tab => {
             tab.addEventListener('click', () => {
                 const mode = tab.dataset.mode;
 
                 const menuToggle = document.getElementById('menuToggle');
-                const headerNav = document.getElementById('headerNav');
-                if (menuToggle && headerNav) {
+                const navMenu = document.getElementById('navMenu');
+                if (menuToggle && navMenu && navMenu.classList.contains('active')) {
                     menuToggle.classList.remove('active');
-                    headerNav.classList.remove('active');
+                    navMenu.classList.remove('active');
                 }
 
                 tabs.forEach(t => t.classList.remove('active'));
@@ -232,26 +207,42 @@ class ExplorePage {
 
                 contents.forEach(c => {
                     c.classList.remove('active');
+                    gsap.killTweensOf(c);
                     c.style.display = 'none';
+                    c.style.opacity = '0';
                 });
 
                 const activeContent = document.getElementById(`${mode}-content`);
-                activeContent.classList.add('active');
-                activeContent.style.display = 'flex';
+                if (activeContent) {
+                    activeContent.style.display = 'flex';
+                    activeContent.classList.add('active');
 
-                description.textContent = descriptions[mode];
+                    activeContent.offsetHeight;
+
+                    gsap.to(activeContent, {
+                        opacity: 1,
+                        duration: 0.3,
+                        ease: "power1.out",
+                        onComplete: () => {
+                            activeContent.style.opacity = '1';
+                        }
+                    });
+                }
 
                 if (mode === 'lugares') {
-                    navigation.style.display = 'flex';
+                    if (navigation) {
+                        navigation.style.display = 'flex';
+                    }
                     this.updateNavigation();
                 } else {
-                    navigation.style.display = 'none';
+                    if (navigation) {
+                        navigation.style.display = 'none';
+                    }
                 }
 
                 if (mode === 'atlas' && !this.mapInitialized) {
                     this.initMap();
                 } else if (mode === 'atlas' && this.map) {
-
                     setTimeout(() => {
                         this.map.invalidateSize();
                     }, 100);
@@ -261,12 +252,6 @@ class ExplorePage {
 
                 this.closePanel('atlas');
                 this.closePanel('lugares');
-
-                gsap.from(activeContent, {
-                    opacity: 0,
-                    y: 20,
-                    duration: 0.5
-                });
             });
         });
     }
@@ -277,18 +262,17 @@ class ExplorePage {
 
         const loading = mapContainer.querySelector('.map-loading');
 
-        if (this.isMobile) {
-            mapContainer.style.minHeight = '400px';
-        }
-
         setTimeout(() => {
             if (loading) {
-                loading.style.opacity = '0';
-                setTimeout(() => {
-                    if (loading.parentNode) {
-                        loading.remove();
+                gsap.to(loading, {
+                    opacity: 0,
+                    duration: 0.5,
+                    onComplete: () => {
+                        if (loading.parentNode) {
+                            loading.remove();
+                        }
                     }
-                }, 500);
+                });
             }
 
             const initialZoom = this.isMobile ? 1.5 : 2;
@@ -319,11 +303,9 @@ class ExplorePage {
 
             setTimeout(() => {
                 this.map.invalidateSize();
-                mapContainer.style.opacity = '1';
-
-                setTimeout(() => {
-                    this.map.invalidateSize();
-                }, 500);
+                if (mapContainer) {
+                    mapContainer.style.opacity = '1';
+                }
             }, 100);
         }, 800);
     }
@@ -332,21 +314,13 @@ class ExplorePage {
         if (!this.map) return;
 
         this.allSedes.forEach((sede, index) => {
-
             const icon = L.divIcon({
-                html: `<div class="custom-marker ${sede.status}"></div>`,
+                html: `<div class="custom-marker ${sede.status}" style="background: ${sede.status === 'active' ? '#4CAF50' : '#F44336'}; border: 2px solid white; box-shadow: 0 0 10px ${sede.status === 'active' ? '#4CAF50' : '#F44336'}"></div>`,
                 className: 'custom-div-icon',
                 iconSize: this.isMobile ? [24, 24] : [20, 20]
             });
 
             const marker = L.marker([sede.lat, sede.lng], { icon }).addTo(this.map);
-
-            marker.bindTooltip(sede.nome, {
-                direction: 'top',
-                opacity: 0.9,
-                className: 'map-tooltip',
-                offset: this.isMobile ? [0, -15] : [0, -10]
-            });
 
             const popupContent = `
                 <div class="map-popup">
@@ -391,6 +365,8 @@ class ExplorePage {
         const panel = document.getElementById('atlas-sede-details');
         const infoPanel = document.getElementById('atlas-info-panel');
 
+        if (!panel || !infoPanel) return;
+
         panel.innerHTML = `
             <div class="sede-details-content">
                 <div class="sede-header">
@@ -431,12 +407,6 @@ class ExplorePage {
                         `).join('')}
                     </div>
                 </div>
-                
-                <div class="sede-actions">
-                    <button class="action-btn secondary" onclick="explorePage.closePanel('atlas')">
-                        ✕ Fechar
-                    </button>
-                </div>
             </div>
         `;
 
@@ -449,7 +419,10 @@ class ExplorePage {
             opacity: 1,
             x: 0,
             duration: 0.5,
-            ease: "power2.out"
+            ease: "power2.out",
+            onComplete: () => {
+                infoPanel.style.opacity = '1';
+            }
         });
 
         if (this.isMobile) {
@@ -476,30 +449,46 @@ class ExplorePage {
         data.forEach((lugar, index) => {
             const card = document.createElement('div');
             card.className = 'place-card';
-            card.style.animationDelay = `${index * 0.1}s`;
+
+            card.style.opacity = '1';
+            card.style.transform = 'translateY(0)';
+            card.style.animation = 'none';
 
             const imagem = lugar.imagem || '../../assets/images/placeholder.webp';
 
             card.innerHTML = `
                 <div class="place-image" style="background-image: url('${imagem}')">
                     <div class="place-overlay">
-                        <span class="place-type">${lugar.tipo === 'real' ? '🏙️ Real' : '✨ Fictício'}</span>
+                        <span class="place-type">${lugar.tipo === 'real' ? 'Real' : 'Fictício'}</span>
                     </div>
                 </div>
                 <div class="place-info">
                     <div class="place-title">${lugar.nome}</div>
                     <div class="place-meta">
-                        <span class="place-tag ${lugar.categoria}">${this.getCategoryIcon(lugar.categoria)} ${lugar.categoria}</span>
+                        <span class="place-tag ${lugar.categoria}">${lugar.categoria}</span>
                         <span class="place-tag ${lugar.tipo}">${lugar.tipo === 'real' ? 'Real' : 'Fictício'}</span>
                     </div>
                     <div class="place-desc">${lugar.descricao}</div>
                     <button class="place-action-btn" onclick="explorePage.showPlaceDetails(${index})">
-                        Explorar Local
+                        <i class="fas fa-search"></i> Explorar Local
                     </button>
                 </div>
             `;
 
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+
             grid.appendChild(card);
+
+            setTimeout(() => {
+                gsap.to(card, {
+                    opacity: 1,
+                    y: 0,
+                    duration: 0.4,
+                    delay: index * 0.05,
+                    ease: "power1.out"
+                });
+            }, 10);
         });
 
         this.filteredPlaces = data;
@@ -507,20 +496,12 @@ class ExplorePage {
         this.updateNavigation();
     }
 
-    getCategoryIcon(category) {
-        const icons = {
-            'urbano': '🏙️',
-            'rural': '🌾',
-            'natural': '🌲',
-            'historico': '🏛️'
-        };
-        return icons[category] || '📍';
-    }
-
     showPlaceDetails(index) {
         const place = this.filteredPlaces[index];
         const panel = document.getElementById('lugares-place-details');
         const infoPanel = document.getElementById('lugares-info-panel');
+
+        if (!panel || !infoPanel) return;
 
         const imagem = place.imagem || '../../assets/images/placeholder.webp';
 
@@ -529,8 +510,8 @@ class ExplorePage {
                 <div class="place-header">
                     <h4>${place.nome}</h4>
                     <div class="place-meta-details">
-                        <span class="place-tag ${place.tipo}">${place.tipo === 'real' ? '🏙️ Real' : '✨ Fictício'}</span>
-                        <span class="place-tag ${place.categoria}">${this.getCategoryIcon(place.categoria)} ${place.categoria}</span>
+                        <span class="place-tag ${place.tipo}">${place.tipo === 'real' ? 'Real' : 'Fictício'}</span>
+                        <span class="place-tag ${place.categoria}">${place.categoria}</span>
                     </div>
                 </div>
                 
@@ -555,21 +536,12 @@ class ExplorePage {
                 <div class="place-actions">
                     ${place.coordenadas ? `
                     <button class="action-btn" onclick="explorePage.showOnMap(${place.coordenadas.lat}, ${place.coordenadas.lng}, '${place.nome}')">
-                        🗺️ Ver no Mapa
+                        <i class="fas fa-map-marker-alt"></i> Ver no Mapa
                     </button>
                     ` : ''}
-                    <button class="action-btn secondary" onclick="explorePage.closePanel('lugares')">
-                        ✕ Fechar
-                    </button>
                 </div>
             </div>
         `;
-
-        if (this.isMobile) {
-            setTimeout(() => {
-                infoPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
-            }, 300);
-        }
 
         gsap.killTweensOf(infoPanel);
         infoPanel.style.display = 'flex';
@@ -580,17 +552,27 @@ class ExplorePage {
             opacity: 1,
             x: 0,
             duration: 0.5,
-            ease: "power2.out"
+            ease: "power2.out",
+            onComplete: () => {
+                infoPanel.style.opacity = '1';
+            }
         });
+
+        if (this.isMobile) {
+            setTimeout(() => {
+                infoPanel.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }, 300);
+        }
 
         this.currentPlaceIndex = index;
         this.updateNavigation();
     }
 
     showOnMap(lat, lng, title) {
-
-        const atlasTab = document.querySelector('[data-mode="atlas"]');
-        if (atlasTab) atlasTab.click();
+        const atlasTab = document.querySelector('.archive-nav-btn[data-mode="atlas"]');
+        if (atlasTab) {
+            atlasTab.click();
+        }
 
         setTimeout(() => {
             if (this.map) {
@@ -600,7 +582,9 @@ class ExplorePage {
                 tempMarker.bindPopup(`<strong>${title}</strong><br>Local do livro`).openPopup();
 
                 setTimeout(() => {
-                    if (tempMarker) this.map.removeLayer(tempMarker);
+                    if (tempMarker) {
+                        this.map.removeLayer(tempMarker);
+                    }
                 }, 5000);
             }
         }, 300);
@@ -645,14 +629,15 @@ class ExplorePage {
     }
 
     setupEventListeners() {
-
         const searchBtn = document.querySelector('.search-btn');
         const searchInput = document.getElementById('search-sede');
 
         if (searchBtn && searchInput) {
             searchBtn.addEventListener('click', () => this.performSearch(searchInput.value));
             searchInput.addEventListener('keypress', (e) => {
-                if (e.key === 'Enter') this.performSearch(searchInput.value);
+                if (e.key === 'Enter') {
+                    this.performSearch(searchInput.value);
+                }
             });
         }
 
@@ -678,13 +663,13 @@ class ExplorePage {
             duration: 0.3,
             onComplete: () => {
                 infoPanel.style.display = 'none';
+                infoPanel.style.opacity = '0';
             }
         });
     }
 
     performSearch(query) {
         if (!query.trim()) {
-
             if (this.map) {
                 this.map.eachLayer((layer) => {
                     if (layer instanceof L.Marker) {
@@ -711,7 +696,7 @@ class ExplorePage {
 
             filtered.forEach((sede, index) => {
                 const icon = L.divIcon({
-                    html: `<div class="custom-marker ${sede.status}"></div>`,
+                    html: `<div class="custom-marker ${sede.status}" style="background: ${sede.status === 'active' ? '#4CAF50' : '#F44336'}; border: 2px solid white; box-shadow: 0 0 10px ${sede.status === 'active' ? '#4CAF50' : '#F44336'}"></div>`,
                     className: 'custom-div-icon',
                     iconSize: this.isMobile ? [24, 24] : [20, 20]
                 });
@@ -737,7 +722,6 @@ class ExplorePage {
             });
 
             if (filtered.length > 0) {
-
                 this.map.flyTo([filtered[0].lat, filtered[0].lng], this.isMobile ? 4 : 5, { duration: 1 });
             }
         }
