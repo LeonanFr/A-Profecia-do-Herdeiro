@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Explorar o Universo</title>
+    <link rel="stylesheet" href="leaflet-custom.css">
+    <link rel="stylesheet" href="explorar.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Merienda:wght@400;500;600;700&display=swap"
+        rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+</head>
+
+<body class="explore-page">
+    <header class="explore-header">
+        <a href="../../index.html" class="back-button">
+            <img src="../../assets/icons/left-arrow.svg" alt="Voltar">
+            <span>Voltar ao Portal</span>
+        </a>
+
+        <div class="header-title">
+            <h1>Explorar o Universo</h1>
+            <p class="subtitle">Atlas da Ordem & Lugares do Livro</p>
+        </div>
+
+        <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+
+        <nav class="header-nav" id="headerNav">
+            <a href="arquivo.html">Arquivo</a>
+            <a href="oraculo.html">Oráculo</a>
+            <a href="quiz.html">Quiz</a>
+            <a href="book.html">Livro</a>
+        </nav>
+    </header>
+
+    <main class="explore-container">
+        <div class="mode-selector">
+            <div class="mode-tabs">
+                <button class="mode-tab active" data-mode="atlas">
+                    <img src="../../assets/icons/atlas.png" alt="Atlas" class="tab-icon">
+                    <span>Atlas da Ordem</span>
+                </button>
+                <button class="mode-tab" data-mode="lugares">
+                    <img src="../../assets/icons/pinpoint.png" alt="Lugares" class="tab-icon">
+                    <span>Lugares do Livro</span>
+                </button>
+            </div>
+
+            <div class="mode-description">
+                <p id="mode-description-text">
+                    Explore as sedes secretas da Ordem ao redor do mundo. Cada ponto guarda histórias, segredos e
+                    membros notáveis.
+                </p>
+            </div>
+        </div>
+
+        <div class="explore-content">
+            <!-- MODO ATLAS -->
+            <div class="mode-content active" id="atlas-content">
+                <div class="atlas-container">
+                    <div class="world-map" id="world-map">
+                        <div class="map-loading">
+                            <div class="spinner"></div>
+                            <p>Carregando o Atlas da Ordem...</p>
+                        </div>
+                    </div>
+
+                    <div class="atlas-controls">
+                        <div class="legend">
+                            <h3>Sedes da Ordem</h3>
+                            <div class="legend-items">
+                                <div class="legend-item">
+                                    <span class="legend-dot active"></span>
+                                    <span>Sede Ativa</span>
+                                </div>
+                                <div class="legend-item">
+                                    <span class="legend-dot inoperante"></span>
+                                    <span>Sede Inoperante</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="search-box">
+                            <input type="text" placeholder="Buscar sede..." id="search-sede">
+                            <button class="search-btn">
+                                <img src="../../assets/icons/search.svg" alt="Buscar">
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <aside class="info-panel" id="atlas-info-panel">
+                    <div class="panel-header">
+                        <h3>Detalhes da Sede</h3>
+                        <button class="close-panel" onclick="explorePage.closePanel('atlas')">×</button>
+                    </div>
+                    <div class="panel-content">
+                        <div class="sede-info" id="atlas-sede-details">
+                            <p class="placeholder">Clique em "Ver Detalhes" em um marcador para ver informações</p>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+
+            <!-- MODO LUGARES -->
+            <div class="mode-content" id="lugares-content">
+                <div class="lugares-container">
+                    <div class="lugares-filters">
+                        <div class="filter-group">
+                            <label for="tipo-filtro">Tipo:</label>
+                            <select id="tipo-filtro">
+                                <option value="todos">Todos os lugares</option>
+                                <option value="real">Locais Reais</option>
+                                <option value="ficticio">Locais Fictícios</option>
+                            </select>
+                        </div>
+
+                        <div class="filter-group">
+                            <label for="categoria-filtro">Categoria:</label>
+                            <select id="categoria-filtro">
+                                <option value="todos">Todas as categorias</option>
+                                <option value="urbano">Urbano</option>
+                                <option value="rural">Rural</option>
+                                <option value="natural">Natural</option>
+                                <option value="historico">Histórico</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="lugares-grid" id="lugares-grid">
+                    </div>
+                </div>
+
+                <aside class="info-panel" id="lugares-info-panel">
+                    <div class="panel-header">
+                        <h3>Detalhes do Local</h3>
+                        <button class="close-panel" onclick="explorePage.closePanel('lugares')">×</button>
+                    </div>
+                    <div class="panel-content">
+                        <div class="sede-info" id="lugares-place-details">
+                            <p class="placeholder">Clique em "Explorar Local" para ver detalhes</p>
+                        </div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <nav class="explore-navigation">
+            <button class="nav-btn prev" disabled>
+                <img src="../../assets/icons/left-arrow.svg" alt="Anterior">
+                <span>Anterior</span>
+            </button>
+
+            <div class="nav-progress">
+                <span class="current">1</span>
+                <span class="separator">de</span>
+                <span class="total">4</span>
+            </div>
+
+            <button class="nav-btn next">
+                <span>Próximo</span>
+                <img src="../../assets/icons/right-arrow.svg" alt="Próximo">
+            </button>
+        </nav>
+    </main>
+
+    <script src="explorar.js"></script>
+</body>
+
+</html>
