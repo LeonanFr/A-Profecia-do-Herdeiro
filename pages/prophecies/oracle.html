@@ -1,0 +1,262 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>O Oráculo da Névoa</title>
+    <link rel="stylesheet" href="oracle.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="icon" href="/assets/icons/prophecy.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Merienda:wght@400;700&family=Inter:wght@300;400;500&family=Crimson+Text:wght@400;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+  </head>
+
+  <body>
+    <nav class="global-nav">
+      <div class="nav-container">
+        <a href="/index.html" class="nav-brand">
+          <span class="brand-symbol">⌘</span>
+          <span class="brand-text">O LIMIAR</span>
+        </a>
+
+        <button class="menu-toggle" id="menuToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+
+        <div class="nav-menu" id="navMenu">
+          <a href="/pages/explorar/explorar.html" class="nav-link">Explorar</a>
+          <a href="/pages/arquivo/archive.html" class="nav-link">Arquivo</a>
+          <a href="/pages/prophecies/oracle.html" class="nav-link active"
+            >Profecias</a
+          >
+          <a href="/pages/initiation/initiation.html" class="nav-link"
+            >Iniciação</a
+          >
+          <a href="/pages/book/book.html" class="nav-link">Livro</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="oracle-container">
+      <header class="oracle-header">
+        <div class="header-content">
+          <h1 class="page-title">O ORÁCULO DA NÉVOA</h1>
+          <p class="page-subtitle">O Tecido do Destino</p>
+        </div>
+      </header>
+
+      <div class="oracle-content">
+        <div class="oracle-intro">
+          <div class="intro-text">
+            <p>
+              O que aconteceu com você foi um distúrbio no destino, causado por
+              indecisões, pensamentos críticos ou até deuses. Entre na barraca,
+              aceite o chá amargo e recupere o controle. O Livro Negro revelará
+              seu futuro.
+            </p>
+            <div class="golden-insect">
+              <span class="insect-text">NOSCE TE IPSUM</span>
+              <span class="insect-symbol">✸</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="oracle-interaction">
+          <div class="oracle-duo">
+            <div class="oracle-column crystal-ball-column">
+              <div class="crystal-ball" id="crystalBall">
+                <div class="crystal-inner">
+                  <div class="nebulous-core"></div>
+                  <div class="pulsing-light"></div>
+                </div>
+                <div class="crystal-glow"></div>
+              </div>
+
+              <div class="crystal-pedestal">
+                <div class="pedestal-base">
+                  <div class="pedestal-inscription">Justo é o Fogo</div>
+                </div>
+              </div>
+
+              <button class="consult-button" id="consultButton">
+                <span class="button-text">Tocar a Névoa</span>
+                <span class="button-subtext">Despertar o Oráculo</span>
+              </button>
+            </div>
+
+            <div class="oracle-column prophecy-column">
+              <div class="prophecy-container" id="prophecyContainer">
+                <div class="prophecy-card" id="prophecyCard">
+                  <div class="card-front">
+                    <div class="card-cover">
+                      <div class="cover-design">
+                        <h1>LIBER<br />FATI</h1>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="card-inside" id="cardInside">
+                    <div class="prophecy-content">
+                      <div class="prophecy-header">
+                        <h3 class="prophecy-title">PROFECIA REVELADA</h3>
+                        <p class="prophecy-date" id="prophecyDate"></p>
+                      </div>
+                      <div class="prophecy-text" id="prophecyText">
+                        <div class="initial-message">
+                          <p>Toque a névoa para revelar seu destino.</p>
+                          <p>A tinta ainda não secou nesta página.</p>
+                        </div>
+                      </div>
+                      <div class="prophecy-footer">
+                        <div class="prophecy-symbols">
+                          <span class="symbol">✸</span>
+                          <span class="symbol">⌘</span>
+                          <span class="symbol">☗</span>
+                        </div>
+                        <p class="prophecy-seal">— Selado pelo Oráculo —</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="prophecy-actions-container">
+            <div class="prophecy-actions" id="prophecyActions">
+              <button class="prophecy-action-btn" id="newProphecy">
+                <span class="action-symbol">↻</span>
+                <span>Tecer Outro Fio</span>
+              </button>
+              <button class="prophecy-action-btn" id="shareProphecy">
+                <span class="action-symbol">↗</span>
+                <span>Compartilhar</span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="oracle-history">
+          <h3 class="history-title">As Irmãs do Fio</h3>
+          <div class="sisters-container">
+            <div class="sister-card">
+              <div class="sister-icon">
+                <img
+                  src="/assets/icons/archive.png"
+                  alt="Cloto"
+                  class="sister-img"
+                  onerror="
+                    this.onerror = null;
+                    this.style.display = 'none';
+                    this.parentElement.innerHTML = '🔄';
+                  "
+                />
+              </div>
+              <h4>Cloto</h4>
+              <p>
+                A mais jovem, com feições de uma garota de treze anos. É ela
+                quem guarda o Livro Negro e extrai o fio da vida daquele que
+                busca respostas, permitindo que o destino comece a se formar.
+              </p>
+            </div>
+            <div class="sister-card">
+              <div class="sister-icon">
+                <img
+                  src="/assets/icons/laquesis.png"
+                  alt="Láquesis"
+                  class="sister-img"
+                  onerror="
+                    this.onerror = null;
+                    this.style.display = 'none';
+                    this.parentElement.innerHTML = '📏';
+                  "
+                />
+              </div>
+              <h4>Láquesis</h4>
+              <p>
+                A mulher de cabelos dourados. Manipula as páginas com um gesto
+                invisível e despeja a tinta mágica que dança no ar, formando as
+                letras antes que se impregnem no papel.
+              </p>
+            </div>
+            <div class="sister-card">
+              <div class="sister-icon">
+                <img
+                  src="/assets/icons/atropos.png"
+                  alt="Átropos"
+                  class="sister-img"
+                  onerror="
+                    this.onerror = null;
+                    this.style.display = 'none';
+                    this.parentElement.innerHTML = '✂';
+                  "
+                />
+              </div>
+              <h4>Átropos</h4>
+              <p>
+                A autoridade final. Sob a fachada de uma senhora sorridente,
+                esconde sua forma de cabelos pétreos e chifres de cervo. É quem
+                lê o destino que o próprio tempo teme professar.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+
+    <footer class="global-footer">
+      <div class="footer-content">
+        <div class="footer-quote">
+          <p id="footerQuote">
+            "Por que continua perguntando as perguntas cujas respostas já
+            conhece?"
+          </p>
+        </div>
+
+        <div class="footer-actions">
+          <a
+            href="https://flyve.com.br/840/a-profecia-do-herdeiro"
+            class="footer-cta"
+            target="_blank"
+            rel="noopener"
+          >
+            <img src="/assets/icons/cta-arrow.png" alt="Ink" id="ink-icon" />
+            <span>Adquira o Livro</span>
+          </a>
+
+          <div class="footer-social">
+            <a
+              href="https://instagram.com/leonanfreitas1"
+              class="social-link"
+              target="_blank"
+              rel="noopener"
+            >
+              <i class="fab fa-instagram"></i>
+            </a>
+            <a
+              href="https://tiktok.com/@leonanfreitas54"
+              class="social-link"
+              target="_blank"
+              rel="noopener"
+            >
+              <i class="fab fa-tiktok"></i>
+            </a>
+          </div>
+        </div>
+
+        <div class="footer-copyright">
+          <p>© 2025 A Ordem dos Guardiões. Todos os direitos reservados.</p>
+        </div>
+      </div>
+    </footer>
+
+    <script src="oracle.js"></script>
+  </body>
+</html>

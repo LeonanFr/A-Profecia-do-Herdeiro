@@ -1,0 +1,54 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>A Profecia do Herdeiro</title>
+    <link rel="stylesheet" href="book.css" />
+    <link rel="icon" href="/assets/icons/prophecy.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+          "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+        }
+      }
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  </head>
+  <body>
+    <nav class="global-nav">
+      <div class="nav-container">
+        <a href="/index.html" class="nav-brand">
+          <span class="brand-symbol">⌘</span>
+          <span class="brand-text">O LIMIAR</span>
+        </a>
+        <div class="nav-menu" id="navMenu">
+          <a href="/pages/explorar/explorar.html" class="nav-link">Explorar</a>
+          <a href="/pages/arquivo/archive.html" class="nav-link">Arquivo</a>
+          <a href="/pages/prophecies/oracle.html" class="nav-link">Profecias</a>
+          <a href="/pages/initiation/initiation.html" class="nav-link"
+            >Iniciação</a
+          >
+          <a href="/pages/book/book.html" class="nav-link active">Livro</a>
+        </div>
+      </div>
+    </nav>
+
+    <div id="canvas-container"></div>
+
+    <div class="book-ui">
+      <div class="ui-controls">
+        <button id="btn-prev" class="book-btn" disabled>Anterior</button>
+        <span id="page-counter" class="page-counter">Capa</span>
+        <button id="btn-next" class="book-btn">Próxima</button>
+      </div>
+    </div>
+
+    <script type="module" src="book.js"></script>
+  </body>
+</html>

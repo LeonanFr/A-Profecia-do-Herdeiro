@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+    <title>Iniciação - O Limiar</title>
+    <link rel="stylesheet" href="initiation.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link rel="icon" href="/assets/icons/prophecy.png" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;500;600;700&family=Crimson+Text:ital,wght@0,400;0,600;1,400&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+  </head>
+  <body class="initiation-page">
+    <nav class="global-nav">
+      <div class="nav-container">
+        <a href="/index.html" class="nav-brand">
+          <span class="brand-symbol">⌘</span>
+          <span class="brand-text">O LIMIAR</span>
+        </a>
+        <button class="menu-toggle" id="menuToggle">
+          <i class="fas fa-bars"></i>
+        </button>
+        <div class="nav-menu" id="navMenu">
+          <a href="/pages/explorar/explorar.html" class="nav-link">Explorar</a>
+          <a href="/pages/arquivo/archive.html" class="nav-link">Arquivo</a>
+          <a href="/pages/prophecies/oracle.html" class="nav-link">Profecias</a>
+          <a href="initiation.html" class="nav-link active">Iniciação</a>
+          <a href="/pages/book/book.html" class="nav-link">Livro</a>
+        </div>
+      </div>
+    </nav>
+
+    <main class="game-container">
+      <div class="game-wrapper">
+        <div class="story-area" id="story-area">
+          <p id="story-text" class="story-text"></p>
+        </div>
+
+        <div class="choices-area" id="choices-area"></div>
+
+        <div class="game-controls">
+          <button id="reset-game" class="reset-btn">
+            <i class="fas fa-redo"></i> Recomeçar Jornada
+          </button>
+        </div>
+      </div>
+    </main>
+
+    <script type="module" src="initiation.js"></script>
+  </body>
+</html>
