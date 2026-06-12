@@ -57,6 +57,12 @@ class InitiationGame {
     this.storyText.innerHTML = node.text;
     this.choicesArea.innerHTML = "";
 
+    if (this.currentNodeKey === "end") {
+      this.storyText.style.textAlign = "center";
+    } else {
+      this.storyText.style.textAlign = "";
+    }
+
     if (node.choices && node.choices.length > 0) {
       node.choices.forEach((choice) => {
         const btn = document.createElement("button");
