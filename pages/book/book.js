@@ -56,6 +56,7 @@ class PremiumHybridBook {
     this.container = document.getElementById("canvas-container");
     this.textures = [];
     this.currentSpread = -1;
+    this.mobileSide = "right";
     this.isAnimating = false;
     this.clock = new THREE.Clock();
 
@@ -84,14 +85,20 @@ class PremiumHybridBook {
 
   initScene() {
     this.scene = new THREE.Scene();
+    this.isMobile = window.matchMedia("(max-width: 768px)").matches;
 
     this.camera = new THREE.PerspectiveCamera(
-      38,
+      this.isMobile ? 45 : 38,
       window.innerWidth / window.innerHeight,
       0.1,
       100,
     );
-    this.camera.position.set(0, 0, 3.4);
+
+    if (this.isMobile) {
+      this.camera.position.set(PAGE_WIDTH / 2, 0, 3.1);
+    } else {
+      this.camera.position.set(0, 0, 3.4);
+    }
 
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
@@ -121,39 +128,38 @@ class PremiumHybridBook {
     this.scene.add(fillLight);
 
     this.controls = new OrbitControls(this.camera, this.renderer.domElement);
-
     this.controls.enableRotate = false;
 
-    this.controls.enablePan = true;
-    this.controls.panSpeed = 0.6;
+    if (this.isMobile) {
+      this.controls.enablePan = false;
+      this.controls.panSpeed = 0.8;
+      this.controls.enableZoom = true;
+      this.controls.zoomToCursor = false;
+      this.controls.zoomSpeed = 1.4;
+      this.controls.minDistance = 3;
+      this.controls.maxDistance = 4;
+      this.controls.target.set(PAGE_WIDTH / 2, 0, 3);
+    } else {
+      this.controls.enablePan = true;
+      this.controls.panSpeed = 0.6;
+      this.controls.enableZoom = true;
+      this.controls.zoomToCursor = true;
+      this.controls.zoomSpeed = 0.35;
+      this.controls.minDistance = 2.2;
+      this.controls.maxDistance = 4.8;
+      this.controls.mouseButtons = {
+        LEFT: THREE.MOUSE.PAN,
+        MIDDLE: THREE.MOUSE.DOLLY,
+        RIGHT: THREE.MOUSE.PAN,
+      };
+      this.controls.target.set(0, 0, 0);
+    }
 
-    this.controls.enableZoom = true;
-    this.controls.zoomToCursor = true;
-    this.controls.zoomSpeed = 0.35;
-
-    this.controls.enableDamping = true;
-    this.controls.dampingFactor = 0.05;
-
-    this.controls.minDistance = 2.2;
-    this.controls.maxDistance = 4.8;
-
-    this.controls.minTargetRadius = 0;
-    this.controls.maxTargetRadius = 1;
-
-    this.controls.mouseButtons = {
-      LEFT: THREE.MOUSE.PAN,
-      MIDDLE: THREE.MOUSE.DOLLY,
-      RIGHT: THREE.MOUSE.PAN,
-    };
-    window.addEventListener("wheel", (e) => {
-      console.log(e.deltaY);
-    });
-    this.controls.target.set(0, 0, 0);
     this.controls.update();
 
     window.addEventListener("resize", () => this.onWindowResize());
     window.addEventListener("pointermove", (e) => this.onPointerMove(e));
-    window.addEventListener("click", () => this.onClick());
+    window.addEventListener("click", (e) => this.onClick(e));
   }
 
   applyTextureSettings(tex) {
@@ -193,23 +199,6 @@ class PremiumHybridBook {
       }
     }
     this.textures.push(this.ctaTexture);
-  }
-
-  async preloadRemainingTextures() {
-    if (BOOK_PAGES_IMAGES.length <= 4) return;
-    const loader = new THREE.TextureLoader();
-
-    for (let i = 4; i < BOOK_PAGES_IMAGES.length; i++) {
-      loader.load(BOOK_PAGES_IMAGES[i], (tex) => {
-        this.applyTextureSettings(tex);
-        this.textures[i] = tex;
-
-        const leafIndex = Math.ceil(i / 2);
-        this.updateLeafMaterial(leafIndex);
-      });
-
-      await new Promise((resolve) => setTimeout(resolve, 80));
-    }
   }
 
   async preloadRemainingTextures() {
@@ -323,12 +312,12 @@ class PremiumHybridBook {
     ctx.fillStyle = "#222222";
     ctx.textAlign = "center";
     ctx.font = 'bold 110px "Crimson Text"';
-    ctx.fillText("A Jornada Continua...", canvas.width / 2, 900);
+    ctx.fillText("A jornada continua...", canvas.width / 2, 900);
 
     ctx.font = 'italic 76px "Crimson Text"';
     ctx.fillStyle = "#444444";
     ctx.fillText(
-      "Descubra o destino de Peter e os segredos",
+      "Descubra o destino dos gêmeos e os segredos",
       canvas.width / 2,
       1120,
     );
@@ -636,38 +625,151 @@ class PremiumHybridBook {
     document.body.style.cursor = this.isHoveringCTA ? "pointer" : "default";
   }
 
-  onClick() {
-    if (this.isHoveringCTA && this.currentSpread === this.maxSpread) {
-      window.open("https://flyve.com.br/840/a-profecia-do-herdeiro", "_blank");
+  onClick(event) {
+    if (this.currentSpread === this.maxSpread) {
+      if (event && event.clientX !== undefined) {
+        this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
+        this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
+      }
+
+      this.raycaster.setFromCamera(this.mouse, this.camera);
+      const intersects = this.raycaster.intersectObjects(
+        this.scene.children,
+        true,
+      );
+
+      for (let intersect of intersects) {
+        const mesh = intersect.object;
+
+        if (mesh.userData && mesh.userData.isCTALeaf) {
+          if (
+            intersect.face &&
+            intersect.face.materialIndex === mesh.userData.ctaFace
+          ) {
+            const uv = intersect.uv;
+            if (uv) {
+              const u = uv.x;
+              const v = uv.y;
+
+              if (u >= 0.255 && u <= 0.744 && v >= 0.343 && v <= 0.418) {
+                window.open(
+                  "https://flyve.com.br/840/a-profecia-do-herdeiro",
+                  "_blank",
+                );
+                break;
+              }
+            }
+          }
+        }
+      }
     }
   }
 
   turnNext() {
     if (this.isAnimating) return;
-    if (this.currentSpread >= this.maxSpread) return;
 
-    this.isAnimating = true;
-    this.currentSpread++;
-    this.updateUI();
+    if (this.isMobile) {
+      if (this.currentSpread >= this.maxSpread && this.mobileSide === "right")
+        return;
 
-    setTimeout(() => {
-      this.isAnimating = false;
+      this.isAnimating = true;
+      if (this.currentSpread === -1) {
+        this.currentSpread = 0;
+        this.mobileSide = "right";
+      } else if (this.mobileSide === "left") {
+        this.mobileSide = "right";
+      } else {
+        this.currentSpread++;
+        this.mobileSide = "left";
+      }
+
       this.updateUI();
-    }, 600);
+      const targetX =
+        this.mobileSide === "left" ? -PAGE_WIDTH / 2 : PAGE_WIDTH / 2;
+
+      gsap.to(this.controls.target, {
+        x: targetX,
+        y: 0,
+        z: 0,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+
+      gsap.to(this.camera.position, {
+        x: targetX,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+
+      setTimeout(() => {
+        this.isAnimating = false;
+        this.updateUI();
+      }, 600);
+    } else {
+      if (this.currentSpread >= this.maxSpread) return;
+
+      this.isAnimating = true;
+      this.currentSpread++;
+      this.updateUI();
+
+      setTimeout(() => {
+        this.isAnimating = false;
+        this.updateUI();
+      }, 600);
+    }
   }
 
   turnPrev() {
     if (this.isAnimating) return;
-    if (this.currentSpread <= -1) return;
 
-    this.isAnimating = true;
-    this.currentSpread--;
-    this.updateUI();
+    if (this.isMobile) {
+      if (this.currentSpread === -1 && this.mobileSide === "right") return;
 
-    setTimeout(() => {
-      this.isAnimating = false;
+      this.isAnimating = true;
+      if (this.currentSpread === 0 && this.mobileSide === "right") {
+        this.currentSpread = -1;
+        this.mobileSide = "right";
+      } else if (this.mobileSide === "right") {
+        this.mobileSide = "left";
+      } else {
+        this.currentSpread--;
+        this.mobileSide = "right";
+      }
+
       this.updateUI();
-    }, 600);
+      const targetX =
+        this.mobileSide === "left" ? -PAGE_WIDTH / 2 : PAGE_WIDTH / 2;
+
+      gsap.to(this.controls.target, {
+        x: targetX,
+        y: 0,
+        z: 0,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+
+      gsap.to(this.camera.position, {
+        x: targetX,
+        duration: 0.6,
+        ease: "power2.out",
+      });
+
+      setTimeout(() => {
+        this.isAnimating = false;
+        this.updateUI();
+      }, 600);
+    } else {
+      if (this.currentSpread <= -1) return;
+
+      this.isAnimating = true;
+      this.currentSpread--;
+      this.updateUI();
+
+      setTimeout(() => {
+        this.isAnimating = false;
+        this.updateUI();
+      }, 600);
+    }
   }
 
   setupUI() {
@@ -677,36 +779,113 @@ class PremiumHybridBook {
 
     this.btnPrev.addEventListener("click", () => this.turnPrev());
     this.btnNext.addEventListener("click", () => this.turnNext());
+
+    const menuToggle = document.getElementById("menuToggle");
+    const navMenu = document.getElementById("navMenu");
+    if (menuToggle && navMenu) {
+      menuToggle.addEventListener("click", () => {
+        navMenu.classList.toggle("active");
+      });
+    }
+
     this.updateUI();
   }
 
   updateUI() {
-    this.btnPrev.disabled = this.currentSpread <= -1 || this.isAnimating;
-    this.btnNext.disabled =
-      this.currentSpread >= this.maxSpread || this.isAnimating;
+    if (this.isMobile) {
+      this.btnPrev.disabled =
+        (this.currentSpread === -1 && this.mobileSide === "right") ||
+        this.isAnimating;
+      this.btnNext.disabled =
+        (this.currentSpread >= this.maxSpread && this.mobileSide === "right") ||
+        this.isAnimating;
 
-    if (this.currentSpread === -1) {
-      this.counter.textContent = "Capa";
-    } else if (this.currentSpread >= this.maxSpread) {
-      this.counter.textContent = "Fim da Amostra";
-    } else if (this.currentSpread === 0) {
-      this.counter.textContent = "Rosto";
+      if (this.currentSpread === -1) {
+        this.counter.textContent = "Capa";
+      } else if (
+        this.currentSpread >= this.maxSpread &&
+        this.mobileSide === "right"
+      ) {
+        this.counter.textContent = "Fim da Amostra";
+      } else if (this.currentSpread === 0) {
+        this.counter.textContent = "Rosto";
+      } else {
+        if (this.mobileSide === "left") {
+          this.counter.textContent = `Pág. ${this.currentSpread * 2}`;
+        } else {
+          this.counter.textContent = `Pág. ${this.currentSpread * 2 + 1}`;
+        }
+      }
     } else {
-      const pLeft = this.currentSpread * 2;
-      const pRight = this.currentSpread * 2 + 1;
-      this.counter.textContent = `Pág. ${pLeft} - ${pRight}`;
+      this.btnPrev.disabled = this.currentSpread <= -1 || this.isAnimating;
+      this.btnNext.disabled =
+        this.currentSpread >= this.maxSpread || this.isAnimating;
+
+      if (this.currentSpread === -1) {
+        this.counter.textContent = "Capa";
+      } else if (this.currentSpread >= this.maxSpread) {
+        this.counter.textContent = "Fim da Amostra";
+      } else if (this.currentSpread === 0) {
+        this.counter.textContent = "Rosto";
+      } else {
+        const pLeft = this.currentSpread * 2;
+        const pRight = this.currentSpread * 2 + 1;
+        this.counter.textContent = `Pág. ${pLeft} - ${pRight}`;
+      }
     }
   }
 
   animate() {
     requestAnimationFrame(() => this.animate());
     const delta = Math.min(this.clock.getDelta(), 0.1);
+
+    if (this.isMobile) {
+      const dist = this.camera.position.distanceTo(this.controls.target);
+      if (dist >= this.controls.maxDistance - 0.05) {
+        this.controls.enablePan = false;
+        const targetX =
+          this.mobileSide === "left" ? -PAGE_WIDTH / 2 : PAGE_WIDTH / 2;
+        this.controls.target.x = THREE.MathUtils.lerp(
+          this.controls.target.x,
+          targetX,
+          0.1,
+        );
+        this.controls.target.y = THREE.MathUtils.lerp(
+          this.controls.target.y,
+          0,
+          0.1,
+        );
+        this.controls.target.z = THREE.MathUtils.lerp(
+          this.controls.target.z,
+          0,
+          0.1,
+        );
+        this.camera.position.x = THREE.MathUtils.lerp(
+          this.camera.position.x,
+          targetX,
+          0.1,
+        );
+      } else {
+        this.controls.enablePan = true;
+        this.controls.target.x = Math.max(
+          -1.2,
+          Math.min(1.2, this.controls.target.x),
+        );
+        this.controls.target.y = Math.max(
+          -0.8,
+          Math.min(0.8, this.controls.target.y),
+        );
+        this.controls.target.z = 0;
+      }
+    }
+
     this.controls.update();
     this.updateLeafStates(delta);
     this.renderer.render(this.scene, this.camera);
   }
 
   onWindowResize() {
+    this.isMobile = window.matchMedia("(max-width: 768px)").matches;
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
     this.renderer.setSize(window.innerWidth, window.innerHeight);

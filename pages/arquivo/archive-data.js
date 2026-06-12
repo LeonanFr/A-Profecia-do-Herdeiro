@@ -67,16 +67,18 @@ const ArchiveData = {
     {
       id: "fall-report",
       date: "Dezembro de 2004",
-      type: "Relatório Oficial",
+      type: "Registro de Deliberação",
       title: "O Fim da Quarta Era",
       excerpt:
-        "A queda simultânea de Paris e Nova Iorque foi o prenúncio. O ataque à Sede Inglesa selou nosso destino.",
+        "Não enviaremos mais resgates. Acolheremos os sobreviventes que alcançarem nossas defesas, mas a Sede Brasileira não marchará para a morte.",
       author: "Miguel, Líder da Sede Brasileira",
       fullContent: `
-                <h3>REGISTRO DE QUEDA GLOBAL</h3>
-                <p>A ofensiva demoníaca tomou o mundo de assalto. A sede norte-americana foi subjugada devido à falta de suprimentos. Paris ruiu logo em seguida. Acreditávamos que o castelo ao sul de Londres resistiria sob a liderança de Ariel Sheridan, mas fomos surpreendidos por táticas e armamentos jamais vistos.</p>
-                <p>O massacre foi absoluto. O feitiço de proteção milenar, mantido pelas sedes, está enfraquecendo. Resta-nos apenas a Sede Brasileira, protegida pela barreira do Cristal de Pura Magia. Fronteiras fechadas indefinidamente.</p>
-            `,
+        <h3>PRONUNCIAMENTO AO CONSELHO</h3>
+        <p>Irmãos, a notícia que temíamos foi confirmada ao amanhecer. O castelo ao sul de Londres sucumbiu. Ariel Sheridan lutou até o último instante, mas as abominações que marcharam contra a Sede Inglesa superaram qualquer defesa descrita em nossos grimórios.</p>
+        <p>O que presenciamos não é uma batalha perdida, mas o fim da nossa Era. Nova Iorque foi asfixiada sem suprimentos, Paris caiu antes que pudéssemos reagir, e agora o feitiço que conectava as grandes casas se apagou. Restou apenas a Sede Brasileira. Apenas o nosso Cristal de Pura Magia ainda mantém a escuridão do lado de fora.</p>
+        <p>É com o peso dessa realidade que estabeleço nossa nova e definitiva diretriz. Nossas portas permanecerão abertas para os refugiados e irmãos que conseguirem alcançar nossas fronteiras — não daremos as costas aos que buscam abrigo. No entanto, proíbo terminantemente o envio de qualquer guardião ou esquadrão de auxílio para o exterior. Não dispersaremos as poucas forças que nos restam.</p>
+        <p>Assumo a responsabilidade por esta decisão. A Ordem precisa que este último bastião permaneça de pé a qualquer custo. Que a Chama ilumine a alma dos que caíram, e que o Fogo nos julgue com justiça pelas escolhas de hoje.</p>
+      `,
     },
   ],
 
