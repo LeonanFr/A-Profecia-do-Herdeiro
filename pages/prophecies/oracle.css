@@ -626,13 +626,11 @@ body {
 }
 
 .prophecy-card {
-  position: relative;
+  display: grid;
   width: 100%;
   max-width: 420px;
-  height: 550px;
-  margin: 0;
+
   transform-style: preserve-3d;
-  transform: perspective(2000px);
   transition: transform 1.2s cubic-bezier(0.68, -0.15, 0.265, 1.15);
 }
 
@@ -656,18 +654,12 @@ body {
 
 .card-front,
 .card-inside {
-  position: absolute;
-  top: 0;
-  left: 0;
+  grid-area: 1 / 1;
   width: 100%;
-  height: 100%;
   backface-visibility: hidden;
-  border-radius: 8px;
-  overflow: hidden;
 }
 
 .card-inside {
-  height: auto;
   min-height: 100%;
 }
 
