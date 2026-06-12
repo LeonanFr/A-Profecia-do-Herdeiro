@@ -230,3 +230,48 @@ body {
     font-size: 0.9rem;
   }
 }
+
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: var(--bg-primary);
+  background-image: radial-gradient(circle at center, #1a1828 0%, #0c0b10 100%);
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gold-primary);
+  font-family: "Cinzel", serif;
+}
+
+.loader-content {
+  text-align: center;
+  animation: pulse 2s infinite ease-in-out;
+}
+
+.loader-symbol {
+  font-size: 3.5rem;
+  display: block;
+  margin-bottom: 20px;
+}
+
+.loader-content p {
+  font-size: 1.2rem;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+}
+
+@keyframes pulse {
+  0%,
+  100% {
+    opacity: 0.6;
+    transform: scale(0.95);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+  }
+}

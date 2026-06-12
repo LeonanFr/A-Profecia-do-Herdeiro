@@ -80,6 +80,19 @@ class PremiumHybridBook {
       this.setupUI();
       this.animate();
       this.preloadRemainingTextures();
+
+      const preloader = document.getElementById("preloader");
+      if (preloader) {
+        gsap.to(preloader, {
+          opacity: 0,
+          duration: 1,
+          delay: 0.3,
+          ease: "power2.inOut",
+          onComplete: () => {
+            preloader.remove();
+          },
+        });
+      }
     });
   }
 
@@ -97,7 +110,7 @@ class PremiumHybridBook {
     if (this.isMobile) {
       this.camera.position.set(PAGE_WIDTH / 2, 0, 3.1);
     } else {
-      this.camera.position.set(0, 0, 3.4);
+      this.camera.position.set(0, 0, 4.5);
     }
 
     this.renderer = new THREE.WebGLRenderer({
@@ -145,8 +158,8 @@ class PremiumHybridBook {
       this.controls.enableZoom = true;
       this.controls.zoomToCursor = true;
       this.controls.zoomSpeed = 0.35;
-      this.controls.minDistance = 2.2;
-      this.controls.maxDistance = 4.8;
+      this.controls.minDistance = 2.5;
+      this.controls.maxDistance = 5;
       this.controls.mouseButtons = {
         LEFT: THREE.MOUSE.PAN,
         MIDDLE: THREE.MOUSE.DOLLY,
