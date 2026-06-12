@@ -48,7 +48,7 @@ const PAGE_THICKNESS = 0.0005;
 const BONE_PAGE_SEGMENTS = 30;
 const BONE_SEGMENT_WIDTH = PAGE_WIDTH / BONE_PAGE_SEGMENTS;
 
-const PAPER_COLOR = 0xfaf5e8;
+const PAPER_COLOR = 0xffffff;
 const COVER_COLOR = 0x1c1417;
 
 class PremiumHybridBook {
@@ -65,8 +65,6 @@ class PremiumHybridBook {
     this.isHoveringCTA = false;
 
     this.leafSheets = [];
-    this.rightBlock = null;
-    this.spineMesh = null;
     this.ctaTexture = null;
 
     this.initScene();
@@ -74,8 +72,6 @@ class PremiumHybridBook {
       this.totalLeaves = Math.ceil((this.textures.length - 1) / 2) + 1;
       this.maxSpread = this.totalLeaves - 2;
 
-      this.buildSpine();
-      this.buildRightBlock();
       this.buildLeaves();
       this.setupUI();
       this.animate();
@@ -116,6 +112,7 @@ class PremiumHybridBook {
     this.renderer = new THREE.WebGLRenderer({
       antialias: true,
       alpha: true,
+      powerPreference: "high-performance",
     });
 
     this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -123,20 +120,15 @@ class PremiumHybridBook {
     this.renderer.shadowMap.enabled = true;
     this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.15;
+
     this.container.appendChild(this.renderer.domElement);
 
-    const ambient = new THREE.AmbientLight(0xffffff, 0.65);
+    const ambient = new THREE.AmbientLight(0xffffff, 1.8);
     this.scene.add(ambient);
 
-    const dirLight = new THREE.DirectionalLight(0xfff5ea, 1.8);
-    dirLight.position.set(3, 7, 4);
-    dirLight.castShadow = true;
-    dirLight.shadow.mapSize.width = 2048;
-    dirLight.shadow.mapSize.height = 2048;
-    dirLight.shadow.bias = -0.0002;
-    this.scene.add(dirLight);
-
-    const fillLight = new THREE.DirectionalLight(0xddeeff, 0.6);
+    const fillLight = new THREE.DirectionalLight(0xffffff, 1.0);
     fillLight.position.set(-4, 3, -2);
     this.scene.add(fillLight);
 
@@ -190,7 +182,7 @@ class PremiumHybridBook {
     tempCanvas.width = 2;
     tempCanvas.height = 2;
     const ctx = tempCanvas.getContext("2d");
-    ctx.fillStyle = "#faf5e8";
+    ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, 2, 2);
     const tempTex = new THREE.CanvasTexture(tempCanvas);
     tempTex.colorSpace = THREE.SRGBColorSpace;
@@ -280,7 +272,7 @@ class PremiumHybridBook {
       ctx.lineWidth = 24;
       ctx.strokeRect(120, 120, canvas.width - 240, canvas.height - 240);
     } else {
-      ctx.fillStyle = "#faf5e8";
+      ctx.fillStyle = "#ffffff";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
       ctx.fillStyle = "#222222";
       ctx.textAlign = "center";
@@ -319,7 +311,7 @@ class PremiumHybridBook {
     canvas.height = 2924;
     const ctx = canvas.getContext("2d");
 
-    ctx.fillStyle = "#faf5e8";
+    ctx.fillStyle = "#ffffff";
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
     ctx.fillStyle = "#222222";
@@ -355,45 +347,6 @@ class PremiumHybridBook {
     const tex = new THREE.CanvasTexture(canvas);
     this.applyTextureSettings(tex);
     return tex;
-  }
-
-  buildSpine() {
-    const thickness = TOTAL_BOOK_PAGES * PAGE_THICKNESS;
-    const spineThickness = 0.012;
-    const spineGeo = new THREE.BoxGeometry(
-      spineThickness,
-      PAGE_HEIGHT,
-      thickness,
-    );
-    spineGeo.translate(-spineThickness / 2, 0, thickness / 2);
-
-    const spineMat = new THREE.MeshStandardMaterial({
-      color: COVER_COLOR,
-      roughness: 0.8,
-    });
-    this.spineMesh = new THREE.Mesh(spineGeo, spineMat);
-    this.spineMesh.castShadow = true;
-    this.spineMesh.receiveShadow = true;
-    this.spineMesh.position.set(0, 0, 0);
-    this.scene.add(this.spineMesh);
-  }
-
-  buildRightBlock() {
-    const unreadAfterSample = Math.max(0, TOTAL_BOOK_PAGES - SAMPLE_PAGES);
-    const thickness = unreadAfterSample * PAGE_THICKNESS;
-    const geometry = new THREE.BoxGeometry(PAGE_WIDTH, PAGE_HEIGHT, thickness);
-    geometry.translate(PAGE_WIDTH / 2, 0, thickness / 2);
-
-    const material = new THREE.MeshStandardMaterial({
-      color: PAPER_COLOR,
-      roughness: 0.9,
-    });
-    this.rightBlock = new THREE.Mesh(geometry, material);
-    this.rightBlock.castShadow = true;
-    this.rightBlock.receiveShadow = true;
-    this.rightBlock.position.x = 0;
-    this.rightBlock.position.z = 0;
-    this.scene.add(this.rightBlock);
   }
 
   buildLeaves() {
@@ -462,7 +415,7 @@ class PremiumHybridBook {
           new THREE.MeshStandardMaterial({
             map: frontTex,
             color: 0xffffff,
-            roughness: 0.5,
+            roughness: 0.65,
           }),
           new THREE.MeshStandardMaterial({
             color: PAPER_COLOR,
@@ -483,12 +436,12 @@ class PremiumHybridBook {
           new THREE.MeshStandardMaterial({
             map: frontTex,
             color: 0xffffff,
-            roughness: 0.8,
+            roughness: 0.65,
           }),
           new THREE.MeshStandardMaterial({
             map: backTex,
             color: 0xffffff,
-            roughness: 0.8,
+            roughness: 0.65,
           }),
         ];
       }
@@ -577,22 +530,10 @@ class PremiumHybridBook {
   }
 
   computeLeafZ(leafIndex, opened) {
-    const rightBlockThickness =
-      Math.max(0, TOTAL_BOOK_PAGES - SAMPLE_PAGES) * PAGE_THICKNESS;
-
     if (opened) {
-      const openCount = this.leafSheets.filter(
-        (l) => l.opened && l.index < leafIndex,
-      ).length;
-      return openCount * PAGE_THICKNESS + 0.001;
+      return leafIndex * 0.0005;
     } else {
-      const closedLeavesAbove = this.leafSheets.filter(
-        (l) => !l.opened && l.index < leafIndex,
-      ).length;
-      const totalClosed = this.leafSheets.filter((l) => !l.opened).length;
-      return (
-        rightBlockThickness + (totalClosed - closedLeavesAbove) * PAGE_THICKNESS
-      );
+      return (this.totalLeaves - leafIndex) * 0.0005;
     }
   }
 
